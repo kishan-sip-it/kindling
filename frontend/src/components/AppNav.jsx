@@ -23,6 +23,11 @@ export default function AppNav() {
           <span className="font-display font-semibold text-stone-900">Kindling</span>
         </Link>
         <div className="flex items-center gap-3">
+          {role === "admin" && (
+            <Link to="/team" className="text-sm font-semibold text-stone-600 hover:text-amber-700">
+              Team
+            </Link>
+          )}
           <span className="hidden text-sm text-stone-600 sm:inline">
             {fullName} · <span className="font-semibold capitalize text-amber-600">{role}</span>
           </span>

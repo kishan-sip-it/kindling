@@ -3,6 +3,7 @@ import PublicCapture from "./pages/PublicCapture";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import LeadDetail from "./pages/LeadDetail";
+import Team from "./pages/Team";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 export default function App() {
@@ -23,6 +24,14 @@ export default function App() {
         element={
           <ProtectedRoute>
             <LeadDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/team"
+        element={
+          <ProtectedRoute>
+            <Team />
           </ProtectedRoute>
         }
       />

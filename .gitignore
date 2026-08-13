@@ -1,10 +1,13 @@
-# Dependencies
-frontend/node_modules/
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
 
-# Python
+# Python virtual environment
 backend/venv/
 
 # Environment secrets
 backend/.env
 
-node_modules/
+# Node dependencies
+frontend/node_modules/

@@ -8,7 +8,7 @@ A lead management application a small sales team could actually use: a public ca
 The brief's own words: "many people are working on this exact brief right now." A generic blue-and-slate SaaS dashboard called "LeadFlow" is exactly what that produces at scale. Kindling reframes the pipeline as a spark-to-fire progression — Spark → Warming → Catching → Ablaze / Ash instead of New → Contacted → Qualified → Won / Lost — paired with a warm stone/amber palette and a serif display font (Fraunces) instead of the default all-sans SaaS look. The underlying data model stays plain and functional (the database still just stores `new`/`contacted`/`qualified`/`won`/`lost` — see `models.py`); only the presentation layer carries the theme, so the architecture isn't compromised for the sake of branding.
 
 ## Live URL
-📍 *[add your deployed URL here]*
+📍 *https://kindling1.netlify.app/*
 
 **Demo credentials:**
 | Role | Email | Password |

@@ -54,3 +54,54 @@ venv\Scripts\activate        # Windows
 # source venv/bin/activate   # macOS/Linux
 
 python -m pip install -r requirements.txt
+```
+
+Create `.env`:
+```env
+DATABASE_URL=postgresql://<user>:<password>@localhost:5432/leadflow_db
+JWT_SECRET_KEY=<any long random string>
+ALLOWED_ORIGINS=http://localhost:5173
+```
+
+```bash
+createdb leadflow_db
+python -m uvicorn app.main:app --reload --port 8000
+python seed.py   # creates demo admin + member accounts
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+```
+Create `.env`: 
+```env
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
+
+```bash
+npm run dev
+```
+
+### Tests
+```bash
+cd backend
+JWT_SECRET_KEY=test-key python -m pytest tests/ -v
+```
+14 tests: auth rules (login success/failure, protected-route rejection, admin-only user creation) and 2+ core flows (public capture → appears in list; the full member self-claim/status/notes permission workflow). Tests run against an in-memory SQLite database — no external DB needed to run them.
+
+## Deployment (free tier)
+
+**Backend + Postgres — Render:**
+1. Push this repo to GitHub.
+2. On [render.com](https://render.com): New → PostgreSQL (free tier) → note the connection string.
+3. New → Web Service → connect the repo, root directory `backend`, build command `pip install -r requirements.txt`, start command `python seed.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT`.
+4. Environment variables: `DATABASE_URL` (from step 2), `JWT_SECRET_KEY` (generate one), `ALLOWED_ORIGINS` (your frontend URL, added after step below).
+
+**Frontend — Vercel or Netlify:**
+1. Import the repo, root directory `frontend`, build command `npm run build`, output directory `dist`.
+2. Environment variable: `VITE_API_BASE_URL` = your Render backend URL.
+3. Once deployed, go back to the Render backend and set `ALLOWED_ORIGINS` to this frontend URL, then redeploy the backend.
+
+## Note on AI usage
+I used Claude to help design the permission model, scaffold the FastAPI/React code, and write the test suite. Writing the tests actually caught a real bug — a UUID stored as a string was being compared against a UUID object from the request schema, which silently broke the "member self-claims a lead" permission check. I fixed that myself once the failing test pointed at it. The specific permission rules (what exactly "member" can and can't do) were a judgment call I made and documented above, since the brief only said "two roles" without specifying the boundary.

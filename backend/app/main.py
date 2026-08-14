@@ -16,7 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from app.database import init_db
-from app.routers import auth, users, public, leads
+from app.routers import auth, routers_users as users, public, leads
 
 logger = logging.getLogger("uvicorn.error")
 

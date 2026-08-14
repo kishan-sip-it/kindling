@@ -47,3 +47,38 @@ def test_admin_can_create_users(client, admin_token):
     )
     assert resp.status_code == 201
     assert resp.json()["email"] == "new@test.com"
+
+
+def test_deactivated_user_cannot_log_in(client, admin_token, member_token, member_user):
+    deactivate = client.patch(f"/api/users/{member_user.id}/deactivate", headers={"Authorization": f"Bearer {admin_token}"})
+    assert deactivate.status_code == 200
+    assert deactivate.json()["is_active"] is False
+
+    login = client.post("/api/auth/login", json={"email": "member@test.com", "password": "password123"})
+    assert login.status_code == 403
+    assert "deactivated" in login.json()["detail"].lower()
+
+
+def test_deactivated_users_existing_token_is_rejected_immediately(client, admin_token, member_token, member_user):
+    """A deactivation should take effect on the next request, not just the
+    next login — otherwise a still-valid token keeps working for up to
+    12 hours after being deactivated."""
+    client.patch(f"/api/users/{member_user.id}/deactivate", headers={"Authorization": f"Bearer {admin_token}"})
+
+    resp = client.get("/api/leads", headers={"Authorization": f"Bearer {member_token}"})
+    assert resp.status_code == 403
+
+
+def test_admin_cannot_deactivate_themselves(client, admin_token, admin_user):
+    resp = client.patch(f"/api/users/{admin_user.id}/deactivate", headers={"Authorization": f"Bearer {admin_token}"})
+    assert resp.status_code == 400
+
+
+def test_reactivated_user_can_log_in_again(client, admin_token, member_user):
+    client.patch(f"/api/users/{member_user.id}/deactivate", headers={"Authorization": f"Bearer {admin_token}"})
+    reactivate = client.patch(f"/api/users/{member_user.id}/reactivate", headers={"Authorization": f"Bearer {admin_token}"})
+    assert reactivate.status_code == 200
+    assert reactivate.json()["is_active"] is True
+
+    login = client.post("/api/auth/login", json={"email": "member@test.com", "password": "password123"})
+    assert login.status_code == 200

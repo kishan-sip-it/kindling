@@ -159,7 +159,7 @@ export default function LeadDetail() {
                 className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm"
               >
                 <option value="">Unassigned</option>
-                {users.map((u) => <option key={u.id} value={u.id}>{u.full_name} ({u.role})</option>)}
+                {users.filter((u) => u.is_active).map((u) => <option key={u.id} value={u.id}>{u.full_name} ({u.role})</option>)}
               </select>
             ) : lead.assigned_to_id ? (
               <p className="text-sm text-stone-600">Assigned to <strong>{lead.assigned_to_name}</strong></p>

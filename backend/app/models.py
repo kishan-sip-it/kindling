@@ -16,7 +16,7 @@ import enum
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Enum as SAEnum, TypeDecorator, CHAR
+from sqlalchemy import Column, String, Text, DateTime, ForeignKey, Enum as SAEnum, TypeDecorator, CHAR, Boolean, Boolean
 from sqlalchemy.orm import relationship
 
 from app.database import Base
@@ -63,6 +63,7 @@ class User(Base):
     full_name = Column(String(255), nullable=False)
     hashed_password = Column(String(255), nullable=False)
     role = Column(SAEnum(UserRole), nullable=False, default=UserRole.member)
+    is_active = Column(Boolean, nullable=False, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     assigned_leads = relationship("Lead", back_populates="assigned_to", foreign_keys="Lead.assigned_to_id")

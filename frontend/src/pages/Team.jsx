@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
-import { UserPlus, ShieldCheck, User as UserIcon } from "lucide-react";
-import { apiGet, apiPost } from "../api/client";
+import { UserPlus, ShieldCheck, User as UserIcon, PowerOff, Power } from "lucide-react";
+import { apiGet, apiPost, apiPatch } from "../api/client";
 import AppNav from "../components/AppNav";
 import Footer from "../components/Footer";
 
@@ -47,6 +47,18 @@ export default function Team() {
       setError(err.message);
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleToggleActive(user) {
+    setError(null);
+    setSuccess(null);
+    try {
+      const action = user.is_active ? "deactivate" : "reactivate";
+      await apiPatch(`/api/users/${user.id}/${action}`, {});
+      load();
+    } catch (err) {
+      setError(err.message);
     }
   }
 
@@ -99,13 +111,25 @@ export default function Team() {
               <div className="space-y-2">
                 {users.map((u) => (
                   <div key={u.id} className="flex items-center gap-3 rounded-lg border border-stone-100 bg-stone-50 px-3 py-2">
-                    <span className={`grid h-8 w-8 place-items-center rounded-full ${u.role === "admin" ? "bg-amber-100 text-amber-700" : "bg-stone-200 text-stone-600"}`}>
+                    <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${u.role === "admin" ? "bg-amber-100 text-amber-700" : "bg-stone-200 text-stone-600"}`}>
                       {u.role === "admin" ? <ShieldCheck className="h-4 w-4" /> : <UserIcon className="h-4 w-4" />}
                     </span>
-                    <div>
-                      <p className="text-sm font-semibold text-stone-800">{u.full_name}</p>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-sm font-semibold ${u.is_active ? "text-stone-800" : "text-stone-400 line-through"}`}>{u.full_name}</p>
                       <p className="text-xs text-stone-400">{u.email} · {u.role}</p>
                     </div>
+                    {u.is_active ? (
+                      <span className="rounded-md bg-emerald-50 px-2 py-0.5 text-[10px] font-bold uppercase text-emerald-700">Active</span>
+                    ) : (
+                      <span className="rounded-md bg-stone-200 px-2 py-0.5 text-[10px] font-bold uppercase text-stone-500">Inactive</span>
+                    )}
+                    <button
+                      onClick={() => handleToggleActive(u)}
+                      title={u.is_active ? "Deactivate" : "Reactivate"}
+                      className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg border ${u.is_active ? "border-rose-200 text-rose-600 hover:bg-rose-50" : "border-emerald-200 text-emerald-600 hover:bg-emerald-50"}`}
+                    >
+                      {u.is_active ? <PowerOff className="h-3.5 w-3.5" /> : <Power className="h-3.5 w-3.5" />}
+                    </button>
                   </div>
                 ))}
               </div>

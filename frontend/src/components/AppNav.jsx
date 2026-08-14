@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
-import { Flame, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { logout } from "../store/authSlice";
 
 export default function AppNav() {
@@ -17,9 +17,11 @@ export default function AppNav() {
     <header className="border-b border-stone-200 bg-white">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link to="/dashboard" className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-stone-900 text-amber-400">
-            <Flame className="h-4 w-4" />
-          </span>
+        <img
+          src="/km-logo.png"
+          alt="KM"
+          className="h-8 w-8 rounded-lg object-cover"
+        />
           <span className="font-display font-semibold text-stone-900">Kindling</span>
         </Link>
         <div className="flex items-center gap-3">
